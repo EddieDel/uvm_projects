@@ -62,13 +62,6 @@ AMBA APB slave/master with register file. Features complete APB protocol impleme
 
 ---
 
-### 04 - UART Verification
-
-UART transmitter and receiver verification environment. Features bit-level timing verification, parity checking (odd, even, none), baud rate configuration, start/stop bit validation, and loopback testing.
-
-[View Project](./04_uart/)
-
----
 
 ## Learning Projects
 

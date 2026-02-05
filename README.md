@@ -54,11 +54,11 @@ Counter design with asynchronous reset handling. Demonstrates advanced reset han
 
 ---
 
-### 03 - APB Slave Verification
+### 03 - APB Slave Master Verification
 
-AMBA APB slave with register file. Features complete APB protocol implementation (PSEL, PENABLE, PREADY, PWRITE), Register Abstraction Layer integration, back-to-back transaction testing, and read-after-write verification.
+AMBA APB slave/master with register file. Features complete APB protocol implementation (PSEL, PENABLE, PREADY, PWRITE), Register Abstraction Layer integration, back-to-back transaction testing, and read-after-write verification.
 
-[View Project](./03_apb_slave/)
+[View Project](./03_apb_slave_master/)
 
 ---
 

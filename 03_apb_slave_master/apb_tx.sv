@@ -1,12 +1,9 @@
 `ifndef APB_TX_SV
  `define APB_TX_SV
 
-`include "apb_pkg.sv";
-
 class apb_tx extends uvm_sequence_item;
   `uvm_object_utils(apb_tx)
-  //package import?
-  import apb_pkg::*;
+
 
   function new (string name = "");
     super.new(name);
@@ -57,3 +54,4 @@ class apb_tx extends uvm_sequence_item;
 endclass
 
 `endif
+

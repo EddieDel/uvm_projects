@@ -1,6 +1,7 @@
 `ifndef APB_TX_SV
  `define APB_TX_SV
 
+
 class apb_tx extends uvm_sequence_item;
   `uvm_object_utils(apb_tx)
 
@@ -41,12 +42,12 @@ class apb_tx extends uvm_sequence_item;
     result = $sformatf("Pre_drive_delay[%0d]",pre_drive_delay);
     
     if ( direction == WRITE) begin
-      result = {result, $sformatf("Write DATA:%0h at ADDR:%0h",pwdata,paddr)};
+      result = {result, $sformatf(",  Write DATA:%0h at ADDR:%0h",pwdata,paddr)};
     end
     else begin
-      result = {result, $sformatf("Read DATA:%0h from ADDR:%0h",prdata,paddr)};
+      result = {result, $sformatf(", Read DATA:%0h from ADDR:%0h",prdata,paddr)};
     end
-    result = {result, $sformatf ("Post_drive_delay[%0d]",post_drive_delay)};
+    result = {result, $sformatf (", Post_drive_delay[%0d]",post_drive_delay)};
     
     return result;
   endfunction
@@ -54,4 +55,5 @@ class apb_tx extends uvm_sequence_item;
 endclass
 
 `endif
+
 

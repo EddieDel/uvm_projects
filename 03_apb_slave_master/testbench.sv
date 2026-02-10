@@ -33,13 +33,24 @@ module testbench ();
                    .psel(aif.psel)
                   );
   
-    
+  //Initial reset so values dont have x
+  initial begin
+    aif.preset_n <= 1;
+    #10ns;
+    aif.preset_n <= 0;
+    #20ns;
+    aif.preset_n <= 1;
+  end
+  
+  
   //put interface in database
   initial begin
    $dumpfile("dump.vcd");
    $dumpvars;
     uvm_config_db#(virtual apb_if)::set(null,"","vif",aif);
-   //run_test("");
+   run_test("");
   end
   
 endmodule
+
+

@@ -6,8 +6,11 @@ class apb_agent extends uvm_agent;
   
 
    virtual apb_if vif;
-   apb_master_monitor master_monitor;
-  
+   
+   apb_master_monitor   master_monitor;
+   apb_master_driver    master_driver;
+   apb_master_sequencer master_sequencer;
+
   function new (string name =" ",uvm_component parent);
     super.new(name,parent);
   endfunction
@@ -17,23 +20,19 @@ class apb_agent extends uvm_agent;
     super.build_phase(phase);
     if (!uvm_config_db#(virtual apb_if)::get(this, "", "vif", vif))
       `uvm_fatal("APB_AGENT", "Could not get vif from config_db")
-      
-    
-                     
-    //create driver instance
-      master_monitor = apb_master_monitor::type_id::create("master_monitor",this);
+           
+    //create components
+    master_monitor   = apb_master_monitor::type_id::create("master_monitor",this);
+    master_driver    = apb_master_driver::type_id::create("master_driver",this);
+    master_sequencer = apb_master_sequencer::type_id::create("master_sequencer",this);
     master_monitor.vif = vif;
-    
-    //create sequencer instance
-    
-    //set interface in database? here or in tesbench.sv???
-                     
-                     
+    master_driver.vif = vif;
+                
   endfunction
   
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    //connect driver with sequencer
+    master_driver.seq_item_port.connect(master_sequencer.seq_item_export);    
   endfunction
   
     

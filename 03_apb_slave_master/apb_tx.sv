@@ -34,10 +34,10 @@ class apb_tx extends uvm_sequence_item;
   }
   
   constraint paddr_align {
-    paddr [1:0] == 2'b00;  // word aligned
+    soft paddr inside { 2'h00, 2'h04, 2'h08, 2'h0C};
   }
   
-  virtual function string convert2string();
+  virtual function string convert2string_response();
     string result;
     result = $sformatf("Pre_drive_delay[%0d]",pre_drive_delay);
     
@@ -52,8 +52,16 @@ class apb_tx extends uvm_sequence_item;
     return result;
   endfunction
   
+  
+  virtual function string convert2string_request();
+    string result;
+     result = $sformatf("Pre_drive_delay[%0d]",pre_drive_delay);
+     result = {result, $sformatf(",  Write DATA:%0h at ADDR:%0h",pwdata,paddr)};
+     result = {result, $sformatf (", Post_drive_delay[%0d]",post_drive_delay)};
+    return result;
+  endfunction
+
 endclass
 
 `endif
-
 

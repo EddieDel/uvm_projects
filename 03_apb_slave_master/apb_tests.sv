@@ -7,10 +7,10 @@ class apb_tests extends apb_test_base;
   
   // Sequences
   virtual apb_if vif;
-  apb_write_sequence  write_sequence; 
-  apb_random_sequences random_sequences;
-  apb_read_sequence   read_sequence;
-  
+  apb_write_sequence           write_sequence; 
+  apb_random_sequences         random_sequences;
+  apb_read_sequence            read_sequence;
+  apb_write_then_read_sequence write_read;
   
   function new (string name = "", uvm_component parent);
     super.new (name,parent);
@@ -18,14 +18,13 @@ class apb_tests extends apb_test_base;
   
   virtual function void build_phase( uvm_phase phase);
     super.build_phase(phase);
-    random_sequences = apb_random_sequences::type_id::create("random_sequences");
-    write_sequence  = apb_write_sequence::type_id::create("write_sequence");
-    read_sequence   = apb_read_sequence::type_id::create("read_sequence");
+    random_sequences             = apb_random_sequences::type_id::create("random_sequences");
+    write_sequence               = apb_write_sequence::type_id::create("write_sequence");
+    read_sequence                = apb_read_sequence::type_id::create("read_sequence");
+    write_read                   = apb_write_then_read_sequence::type_id::create("write_read");
   endfunction
   
-  
-  
-  
+
   virtual task run_phase(uvm_phase phase);
     if (!uvm_config_db#(virtual apb_if)::get(this, "", "vif", vif))
       `uvm_fatal("Tests", "Could not get vif from config_db")
@@ -44,6 +43,10 @@ class apb_tests extends apb_test_base;
      reset_dut(vif);
      read_sequence.start(environment.agent.master_sequencer);
     
+    `uvm_info ("Read Test", ">>> [1] Running Write then Read Transaction Test...",UVM_LOW);
+     reset_dut(vif);
+     write_read.start(environment.agent.master_sequencer);
+    
     
     phase.drop_objection(this,"=========== Finished Tests ===========");
   endtask
@@ -58,5 +61,6 @@ class apb_tests extends apb_test_base;
   
 endclass
 `endif
+
 
 

@@ -33,8 +33,8 @@ class apb_tx extends uvm_sequence_item;
       soft post_drive_delay <= 5;
   }
   
-  constraint paddr_align {
-    soft paddr inside { 2'h00, 2'h04, 2'h08, 2'h0C};
+  constraint valid_addr {
+    soft paddr inside { 8'h00, 8'h04, 8'h08, 8'h0C};
   }
   
   virtual function string convert2string_response();

@@ -11,6 +11,7 @@ class apb_tests extends apb_test_base;
   apb_random_sequences         random_sequences;
   apb_read_sequence            read_sequence;
   apb_write_then_read_sequence write_read;
+  apb_invalid_addr_sequence     invalid_addr;
   
   function new (string name = "", uvm_component parent);
     super.new (name,parent);
@@ -22,6 +23,7 @@ class apb_tests extends apb_test_base;
     write_sequence               = apb_write_sequence::type_id::create("write_sequence");
     read_sequence                = apb_read_sequence::type_id::create("read_sequence");
     write_read                   = apb_write_then_read_sequence::type_id::create("write_read");
+    invalid_addr                 = apb_invalid_addr_sequence::type_id::create("invalid_addr");
   endfunction
   
 
@@ -33,19 +35,28 @@ class apb_tests extends apb_test_base;
      
     `uvm_info ("Random Test", ">>> [1] Running Random Transactions Test...",UVM_LOW); 
      reset_dut(vif);
+     environment.scoreboard.reset_model(); // Call scoreboard function
      random_sequences.start(environment.agent.master_sequencer);
     
-    `uvm_info ("Write Test", ">>> [1] Running Write Transaction Test...",UVM_LOW); 
+    `uvm_info ("Write Test", ">>> [2] Running Write Transaction Test...",UVM_LOW); 
      reset_dut(vif);
+     environment.scoreboard.reset_model();
      write_sequence.start(environment.agent.master_sequencer);
     
-    `uvm_info ("Read Test", ">>> [1] Running Read Transaction Test...",UVM_LOW); 
+    `uvm_info ("Read Test", ">>> [3] Running Read Transaction Test...",UVM_LOW); 
      reset_dut(vif);
+     environment.scoreboard.reset_model();
      read_sequence.start(environment.agent.master_sequencer);
     
-    `uvm_info ("Read Test", ">>> [1] Running Write then Read Transaction Test...",UVM_LOW);
+    `uvm_info ("Read Test", ">>> [4] Running Write then Read Transaction Test...",UVM_LOW);
      reset_dut(vif);
+     environment.scoreboard.reset_model();
      write_read.start(environment.agent.master_sequencer);
+    
+    `uvm_info ("Invalid Addr Test", ">>> [5] Running Invalid Addr Test...",UVM_LOW);
+     reset_dut(vif);
+     environment.scoreboard.reset_model();
+     invalid_addr.start(environment.agent.master_sequencer);
     
     
     phase.drop_objection(this,"=========== Finished Tests ===========");
@@ -61,6 +72,7 @@ class apb_tests extends apb_test_base;
   
 endclass
 `endif
+
 
 
 

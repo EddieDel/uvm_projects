@@ -38,7 +38,90 @@ interface apb_if (input pclk);
     input  pslverr;
   endclocking
 
-  //ASSERTIONS LATER
+
+  // ===================================================================
+  // ASSERTIONS FOR PROTOCOL CHECKING
+  // ===================================================================
+  
+  //Psel stable during transaction
+  property psel_stable;
+    @(posedge pclk) disable iff (!preset_n) 
+    (psel && !pready) |=> psel;
+  endproperty
+    
+  // Penable must follow psel
+  property penable_after_psel;
+    @(posedge pclk) disable iff (!preset_n) 
+    (psel && !penable) |=> penable;
+  endproperty
+  
+
+  // Data stable during access phase
+  property pwdata_stable;
+    @(posedge pclk) disable iff (!preset_n)
+    ((psel && penable && !pready) || (psel && !penable && !pready)) |-> $stable(pwdata); 
+  endproperty
+                                                    
+
+  // Addr stable during access phase
+  property paddr_stable;
+    @(posedge pclk) disable iff (!preset_n)
+    ((psel && penable && !pready) || (psel && !penable && !pready)) |-> $stable(paddr);
+  endproperty
+  
+    
+  // Penable only with psel
+  property proper_penable;
+    @(posedge pclk) disable iff (!preset_n)
+    penable |-> psel;
+  endproperty
+  
+  //Deassert penalbe after transfer
+  property penable_deassert;
+    @(posedge pclk) disable iff (!preset_n)
+    (psel && penable && pready) |=> !penable;
+  endproperty
+  
+  // Can only exit ACCESS when pready is asserted
+  property access_exit_on_pready;
+    @(posedge pclk) disable iff (!preset_n)
+    (psel && penable) |-> (penable || pready);
+   // If in ACCESS, stay in ACCESS (penable=1) OR pready must be high
+  endproperty
+  
+  //Assertions instances
+  assert_stable_psel: assert property (psel_stable)
+    else $error ("ASSERTION FIRED : Psel didnt remain stable throughout transmission");
+    
+  assert_enable_after_se: assert property (penable_after_psel)
+    else $error ("ASSERTION FIRED : Enable didnt rise after psel");
+    
+  assert_data_stable : assert property (pwdata_stable)
+    else $error ("ASSERTION FIRED : Data didnt remain stable throughout transmission");
+  
+  assert_addr_stable: assert property (paddr_stable)
+    else $error ("ASSERTION FIRED : Addr didnt remain stable throughout transmission");
+  
+  assert_penable_deassertion: assert property (penable_deassert)
+    else $error ("ASSERTION FIRED : Enable didnt deassert while psel asserted");
+  
+  assert_access_exit: assert property (access_exit_on_pready)
+    else $error ("ASSERTION FIRED : Access_exited without pready asserted");
+ 
+  assert_proper_penalbe: assert property (proper_penable)
+    else $error ("ASSERTION FIRED : Enable asserted without psel");
+    
+    
+  //Coverage of assertions
+   cover_psel_stable: cover property (psel_stable);
+   cover_penable_after_psel: cover property (penable_after_psel);
+   cover_data_stable: cover property (pwdata_stable);
+   cover_addr_stable: cover property(paddr_stable);
+   cover_penable_deassertion: cover property(penable_deassert);
+   cover_access_exit: cover property(access_exit_on_pready);
+   cover_proper_penable: cover property(proper_penable);
+        
 
 endinterface
   
+

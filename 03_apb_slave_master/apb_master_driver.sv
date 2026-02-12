@@ -18,6 +18,10 @@ class apb_master_driver extends uvm_driver #(.REQ(apb_tx));
   endfunction
   
   virtual task run_phase(uvm_phase phase);
+   // Initialize bus to IDLE
+   vif.cb_drv.psel <= 0;
+   vif.cb_drv.penable <= 0;
+   @(vif.cb_drv);
     forever begin
       drive_transactions();
     end  

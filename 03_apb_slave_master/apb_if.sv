@@ -57,18 +57,16 @@ interface apb_if (input pclk);
   
 
   // Data stable during access phase
-  property pwdata_stable;
-    @(posedge pclk) disable iff (!preset_n)
-    ((psel && penable && !pready) || (psel && !penable && !pready)) |-> $stable(pwdata); 
-  endproperty
-                                                    
-
-  // Addr stable during access phase
   property paddr_stable;
     @(posedge pclk) disable iff (!preset_n)
-    ((psel && penable && !pready) || (psel && !penable && !pready)) |-> $stable(paddr);
+    ($past(psel) && psel && !pready) |-> $stable(paddr);
   endproperty
-  
+
+  property pwdata_stable;
+    @(posedge pclk) disable iff (!preset_n)
+    ($past(psel) && psel && !pready) |-> $stable(pwdata);
+  endproperty
+ 
     
   // Penable only with psel
   property proper_penable;
@@ -82,12 +80,6 @@ interface apb_if (input pclk);
     (psel && penable && pready) |=> !penable;
   endproperty
   
-  // Can only exit ACCESS when pready is asserted
-  property access_exit_on_pready;
-    @(posedge pclk) disable iff (!preset_n)
-    (psel && penable) |-> (penable || pready);
-   // If in ACCESS, stay in ACCESS (penable=1) OR pready must be high
-  endproperty
   
   //Assertions instances
   assert_stable_psel: assert property (psel_stable)
@@ -104,9 +96,6 @@ interface apb_if (input pclk);
   
   assert_penable_deassertion: assert property (penable_deassert)
     else $error ("ASSERTION FIRED : Enable didnt deassert while psel asserted");
-  
-  assert_access_exit: assert property (access_exit_on_pready)
-    else $error ("ASSERTION FIRED : Access_exited without pready asserted");
  
   assert_proper_penalbe: assert property (proper_penable)
     else $error ("ASSERTION FIRED : Enable asserted without psel");
@@ -118,10 +107,10 @@ interface apb_if (input pclk);
    cover_data_stable: cover property (pwdata_stable);
    cover_addr_stable: cover property(paddr_stable);
    cover_penable_deassertion: cover property(penable_deassert);
-   cover_access_exit: cover property(access_exit_on_pready);
    cover_proper_penable: cover property(proper_penable);
         
 
 endinterface
   
+
 

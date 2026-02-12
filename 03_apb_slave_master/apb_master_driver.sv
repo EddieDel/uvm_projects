@@ -32,7 +32,10 @@ class apb_master_driver extends uvm_driver #(.REQ(apb_tx));
   endtask
   
   virtual task drive_transaction (apb_tx item);
-    `uvm_info("[DRIVER]",$sformatf("\%0s\": %0s",item.get_full_name(),item.convert2string()), UVM_NONE)
+
+    if (item.direction == WRITE) begin
+      `uvm_info("[DRIVER]",$sformatf("\%0s\": %0s",item.get_full_name(),item.convert2string_request()), UVM_NONE)
+    end
     
     //Pre drive delay
     for(int i = 0; i<item.pre_drive_delay; i++) begin
@@ -74,6 +77,7 @@ class apb_master_driver extends uvm_driver #(.REQ(apb_tx));
     for(int i =0; i<item.post_drive_delay; i++) begin
       @(vif.cb_drv);
     end
+    
 
   endtask
 

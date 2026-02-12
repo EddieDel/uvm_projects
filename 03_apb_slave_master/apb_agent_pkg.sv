@@ -14,6 +14,8 @@ package apb_agent_pkg;
  `include "apb_master_sequencer.sv";
  `include "apb_master_driver.sv";
  `include "apb_master_monitor.sv";
+ `include "apb_master_coverage.sv";
+ `include "apb_scoreboard.sv";
  `include "apb_agent.sv";
 
 endpackage

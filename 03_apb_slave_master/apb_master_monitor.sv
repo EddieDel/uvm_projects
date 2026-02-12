@@ -45,11 +45,11 @@ class apb_master_monitor extends uvm_monitor;
       // Capture response
       if (txn.direction == READ) begin
       	txn.prdata = vif.cb_mon.prdata;
-        txn.response = apb_response_e'(vif.cb_mon.pslverr); //Cast to enum
       end
+      txn.response = apb_response_e'(vif.cb_mon.pslverr); //Cast to enum
       
       // Send to analysis port
-      `uvm_info("APB_MON", $sformatf("Observed: %s", txn.convert2string()), UVM_MEDIUM)
+      `uvm_info("APB_MON", $sformatf("Observed: %s", txn.convert2string_response()), UVM_MEDIUM)
       analysis_port.write(txn);
     end
   endtask
@@ -57,3 +57,4 @@ class apb_master_monitor extends uvm_monitor;
 endclass
 
 `endif
+

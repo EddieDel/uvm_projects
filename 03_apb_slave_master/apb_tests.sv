@@ -7,11 +7,12 @@ class apb_tests extends apb_test_base;
   
   // Sequences
   virtual apb_if vif;
-  apb_write_sequence           write_sequence; 
-  apb_random_sequences         random_sequences;
-  apb_read_sequence            read_sequence;
-  apb_write_then_read_sequence write_read;
+  apb_write_sequence            write_sequence; 
+  apb_random_sequences          random_sequences;
+  apb_read_sequence             read_sequence;
+  apb_write_then_read_sequence  write_read;
   apb_invalid_addr_sequence     invalid_addr;
+  apb_ral_write_read_seq        apb_ral_write_read;
   
   function new (string name = "", uvm_component parent);
     super.new (name,parent);
@@ -24,6 +25,7 @@ class apb_tests extends apb_test_base;
     read_sequence                = apb_read_sequence::type_id::create("read_sequence");
     write_read                   = apb_write_then_read_sequence::type_id::create("write_read");
     invalid_addr                 = apb_invalid_addr_sequence::type_id::create("invalid_addr");
+    apb_ral_write_read           = apb_ral_write_read_seq::type_id::create("apb_ral_write_read");
   endfunction
   
 
@@ -57,7 +59,14 @@ class apb_tests extends apb_test_base;
      reset_dut(vif);
      environment.scoreboard.reset_model();
      invalid_addr.start(environment.agent.master_sequencer);
+ 
+    `uvm_info ("Reg Write Read", ">>> [6] Running Reg Write Reat Test...",UVM_LOW);
+     reset_dut(vif);
+     environment.scoreboard.reset_model();
+     apb_ral_write_read.model = environment.reg_block;
+     apb_ral_write_read.start(environment.agent.master_sequencer);    
     
+     
     
     phase.drop_objection(this,"=========== Finished Tests ===========");
   endtask
@@ -72,7 +81,5 @@ class apb_tests extends apb_test_base;
   
 endclass
 `endif
-
-
 
 

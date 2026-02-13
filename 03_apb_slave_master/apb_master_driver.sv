@@ -32,7 +32,7 @@ class apb_master_driver extends uvm_driver #(.REQ(apb_tx));
       apb_tx item;
       seq_item_port.get_next_item(item);
       drive_transaction(item);    
-      seq_item_port.item_done();
+      seq_item_port.item_done(item);
   endtask
   
   virtual task drive_transaction (apb_tx item);
@@ -68,6 +68,10 @@ class apb_master_driver extends uvm_driver #(.REQ(apb_tx));
      @(vif.cb_drv);
     end
     
+    // Capture response data BEFORE clearing signals
+    item.prdata   = vif.cb_drv.prdata;
+    item.response = vif.cb_drv.pslverr ? ERROR : OK;
+    
     //Move to idle
       vif.cb_drv.psel    <= 0;
       vif.cb_drv.paddr   <= 0;
@@ -87,3 +91,5 @@ class apb_master_driver extends uvm_driver #(.REQ(apb_tx));
 
 endclass
 `endif
+
+

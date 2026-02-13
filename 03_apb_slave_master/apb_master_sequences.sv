@@ -25,9 +25,11 @@ class apb_random_sequences extends uvm_sequence#(.REQ(apb_tx));
     super.new(name);
   endfunction
   
-  virtual task body();    
+  virtual task body(); 
+    apb_tx rsp;
     repeat(50) begin
       `uvm_do(item);
+       get_response(rsp);
     end
   endtask
 endclass
@@ -113,12 +115,15 @@ class apb_invalid_addr_sequence extends uvm_sequence#(.REQ(apb_tx));
   endfunction
   
   virtual task body();
+    apb_tx rsp;
     repeat (5) begin
     `uvm_do_with(item, {direction == WRITE; paddr == 8'hFF;});
+     get_response(rsp);
     end
   endtask
 endclass
 
 
 `endif
+
 

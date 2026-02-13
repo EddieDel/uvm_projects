@@ -4,10 +4,12 @@
 `include "uvm_macros.svh"
 `include "apb_pkg.sv"
 `include "apb_if.sv"
+`include "apb_reg_pkg.sv"
 
 package apb_agent_pkg;
  import uvm_pkg::*;
  import apb_pkg::*;
+ import apb_reg_pkg::*;
   
  `include "apb_tx.sv";
  `include "apb_master_sequences.sv";

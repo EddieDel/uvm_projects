@@ -1,2 +1,64 @@
-https://edaplayground.com/x/r9sU
 
+---
+
+# APB Master VIP - UVM Verification Project with RAL
+
+## Description
+Complete UVM testbench for an APB slave with Register Abstraction Layer (RAL) integration.
+
+### 0. EDA Playground
+1. Open: [EDA Playground Link]
+2. Click "Run"
+
+---
+
+## 1. DESIGN SPECIFICATION
+
+### 1.1 Design Overview
+The DUT is an APB slave with:
+- **Clock:** APB clock input (pclk)
+- **Reset:** Active-low asynchronous reset (preset_n)
+- **Select:** Slave select signal (psel)
+- **Enable:** Access phase indicator (penable)
+- **Direction:** Write/Read control (pwrite)
+- **Address:** 8-bit address bus (paddr)
+- **Data:** 32-bit read/write data buses (prdata, pwdata)
+
+### 1.2 Register Map
+| Address | Register | Access | Reset Value | Description |
+|---------|----------|--------|-------------|-------------|
+| 0x00 | CTRL_REG | RW | 0x00000000 | Control register |
+| 0x04 | STATUS_REG | RO | 0xABCD0000 | Status with HW_ID |
+| 0x08 | DATA_REG | RW | 0x00000000 | Data register |
+| 0x0C | IRQ_REG | W1C | 0x00000000 | Interrupt flags |
+
+---
+
+## 2. TEST SCENARIOS
+
+| Test ID | Test Name | Description | Coverage Goal |
+|---------|-----------|-------------|---------------|
+| TC-001 | Random Transactions | 50 randomized read/write | General coverage |
+| TC-101 | Write-Then-Read | Write data, read back, compare | Data integrity |
+| TC-102 | RAL Write-Read | RAL-based write 0xCAFEBABE, verify | RAL functionality |
+| TC-201 | Invalid Address | Write to addr 0xFF | Error handling |
+
+---
+
+
+
+## 3. RAL IMPLEMENTATION
+
+| Step | Action |
+|------|--------|
+| 1 | Test sets `sequence.model = env.reg_block` |
+| 2 | Sequence calls `reg_block.m_ctrl_reg.write(status, data)` |
+| 3 | Adapter `reg2bus()` creates apb_tx |
+| 4 | Driver executes, captures prdata/pslverr |
+| 5 | Driver returns response via `item_done(item)` |
+| 6 | Adapter `bus2reg()` extracts response |
+| 7 | Predictor updates register mirror |
+
+---
+
+**APB project complete!** Ready for RISC-V?

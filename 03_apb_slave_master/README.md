@@ -2,21 +2,11 @@
 
 Complete UVM testbench for an APB slave with Register Abstraction Layer (RAL) integration.
 
-## Table of Contents
-- [Quick Start](#quick-start)
-- [Design Specification](#design-specification)
-- [Verification Approach](#verification-approach)
-- [Test Scenarios](#test-scenarios)
-- [Coverage Plan](#coverage-plan)
-- [Assertions](#assertions)
-- [RAL Implementation](#ral-implementation)
-
----
 
 ## Quick Start
 
 ### EDA Playground
-1. Open: [EDA Playground Link]
+1. Open: https://edaplayground.com/x/r9sU
 2. Click "Run"
 
 ---
@@ -68,10 +58,10 @@ The DUT is an APB slave with the following interface:
 - **Constrained Random:** Primary stimulus generation method
 
 ### Key Features
-✅ **RAL from Scratch** - Complete register model with adapter and predictor  
-✅ **Response Handling** - Driver returns responses via `item_done(item)` for RAL  
-✅ **Package Organization** - Separate `apb_reg_pkg` avoids circular dependencies  
-✅ **Protocol Assertions** - SVA with proper `$past()` timing for stability checks  
+**RAL from Scratch** - Complete register model with adapter and predictor  
+**Response Handling** - Driver returns responses via `item_done(item)` for RAL  
+**Package Organization** - Separate `apb_reg_pkg` avoids circular dependencies  
+**Protocol Assertions** - SVA with proper `$past()` timing for stability checks  
 
 ---
 
@@ -99,13 +89,7 @@ The DUT is an APB slave with the following interface:
 | **TC-201** | Invalid Address | Write to address `0xFF` | Scoreboard catches missing ERROR |
 | **TC-202** | RO Register Write | Attempt write to STATUS_REG | Write ignored, value unchanged |
 
-### Register-Specific Tests
 
-| Test ID | Test Name | Description | Expected Behavior |
-|---------|-----------|-------------|-------------------|
-| **TC-301** | CTRL_REG RW | Write/read control register | Full 32-bit read/write access |
-| **TC-302** | STATUS_REG RO | Read status register | Returns HW_ID=`0xABCD` |
-| **TC-303** | IRQ_REG W1C | Write-1-to-clear interrupt flags | Written bits clear, others unchanged |
 
 ---
 
@@ -170,16 +154,6 @@ apb_reg_block (uvm_reg_block)
 └── irq_reg (uvm_reg) - W1C
 ```
 
-### Register Classes
-
-| Class | Base Class | Access | Description |
-|-------|------------|--------|-------------|
-| `ctrl_reg` | `uvm_reg` | RW | 32-bit control register |
-| `status_reg` | `uvm_reg` | RO | Read-only with `hw_id` field |
-| `data_reg` | `uvm_reg` | RW | 32-bit data register |
-| `irq_reg` | `uvm_reg` | W1C | 32-bit interrupt flags |
-| `apb_reg_block` | `uvm_reg_block` | - | Top-level register block |
-
 ### RAL Adapter Methods
 
 | Method | Direction | Description |
@@ -187,52 +161,7 @@ apb_reg_block (uvm_reg_block)
 | `reg2bus()` | RAL → APB | Converts `uvm_reg_bus_op` to `apb_tx` |
 | `bus2reg()` | APB → RAL | Extracts response from `apb_tx` |
 
-### RAL Data Flow
-```
-1. Test sets sequence.model = env.reg_block
-                    ↓
-2. Sequence calls reg_block.m_ctrl_reg.write(status, data)
-                    ↓
-3. Adapter reg2bus() creates apb_tx
-                    ↓
-4. Driver executes transaction, captures prdata/pslverr
-                    ↓
-5. Driver returns response via item_done(item)
-                    ↓
-6. Adapter bus2reg() extracts response
-                    ↓
-7. Predictor updates register mirror values
-```
 
----
-
-## Project Structure
-```
-apb_vip/
-├── rtl/
-│   └── apb_slave.sv
-├── tb/
-│   ├── apb_if.sv
-│   ├── apb_pkg.sv
-│   ├── apb_reg_pkg.sv
-│   ├── sequences/
-│   ├── agent/
-│   ├── env/
-│   └── tests/
-└── README.md
-```
-
----
-
-## License
-
-This project is provided as-is for educational purposes.
-
----
-
-## Author
-
-Hawx - Verification Engineer
 
 
 

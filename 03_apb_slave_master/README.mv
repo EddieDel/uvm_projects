@@ -1,6 +1,3 @@
-
----
-
 # APB Master VIP - UVM Verification Project with RAL
 
 ## Description
@@ -32,23 +29,124 @@ The DUT is an APB slave with:
 | 0x08 | DATA_REG | RW | 0x00000000 | Data register |
 | 0x0C | IRQ_REG | W1C | 0x00000000 | Interrupt flags |
 
+### 1.3 Functional Behavior
+| Condition | Behavior |
+|-----------|----------|
+| `psel=1, penable=0` | SETUP phase |
+| `psel=1, penable=1` | ACCESS phase |
+| `pwrite=1` | Write operation |
+| `pwrite=0` | Read operation |
+| `pready=1` | Transfer complete |
+
 ---
 
-## 2. TEST SCENARIOS
+## 2. VERIFICATION APPROACH
 
+### 2.1 Methodology
+- **Framework:** UVM (Universal Verification Methodology)
+- **RAL Integration:** Register model with adapter and predictor
+- **Coverage-Driven:** Address, direction, and cross coverage
+- **Assertion-Based:** SVA for APB protocol compliance
+- **Constrained Random:** Primary stimulus generation
+
+### 2.2 Key Features
+- **RAL from Scratch:** Complete register model with adapter and predictor
+- **Response Handling:** Driver returns responses via `item_done(item)` for RAL
+- **Package Organization:** Separate `apb_reg_pkg` avoids circular dependencies
+- **Protocol Assertions:** SVA with proper `$past()` timing for stability checks
+
+---
+
+## 3. TEST SCENARIOS
+
+### 3.1 Basic Functional Tests
 | Test ID | Test Name | Description | Coverage Goal |
 |---------|-----------|-------------|---------------|
 | TC-001 | Random Transactions | 50 randomized read/write | General coverage |
+| TC-002 | Write Sequence | Single write operation | Write path |
+| TC-003 | Read Sequence | Single read operation | Read path |
+
+### 3.2 Data Integrity Tests
+| Test ID | Test Name | Description | Coverage Goal |
+|---------|-----------|-------------|---------------|
 | TC-101 | Write-Then-Read | Write data, read back, compare | Data integrity |
 | TC-102 | RAL Write-Read | RAL-based write 0xCAFEBABE, verify | RAL functionality |
-| TC-201 | Invalid Address | Write to addr 0xFF | Error handling |
+
+### 3.3 Error Handling Tests
+| Test ID | Test Name | Description | Expected Behavior |
+|---------|-----------|-------------|-------------------|
+| TC-201 | Invalid Address | Write to addr 0xFF | Scoreboard catches missing ERROR |
+| TC-202 | RO Register Write | Write to STATUS_REG | Write ignored |
+
+### 3.4 Register-Specific Tests
+| Test ID | Test Name | Description | Expected Behavior |
+|---------|-----------|-------------|-------------------|
+| TC-301 | CTRL_REG RW | Write/read control register | Full 32-bit access |
+| TC-302 | STATUS_REG RO | Read status register | Returns HW_ID=0xABCD |
+| TC-303 | IRQ_REG W1C | Write-1-to-clear flags | Bits clear on write-1 |
 
 ---
 
+## 4. COVERAGE PLAN
 
+### 4.1 Address Coverage
+| Coverpoint | Description | Bins | Goal |
+|------------|-------------|------|------|
+| `addr` | Valid addresses | 4 bins (0x00, 0x04, 0x08, 0x0C) | 100% |
+| `invalid_addr` | Invalid address | 1 bin (0xFF) | Hit |
 
-## 3. RAL IMPLEMENTATION
+### 4.2 Direction Coverage
+| Coverpoint | Description | Bins | Goal |
+|------------|-------------|------|------|
+| `direction` | Read/Write | 2 bins (READ, WRITE) | 100% |
 
+### 4.3 Response Coverage
+| Coverpoint | Description | Bins | Goal |
+|------------|-------------|------|------|
+| `response` | Slave response | 2 bins (OK, ERROR) | 100% |
+
+### 4.4 Cross Coverage
+| Cross | Description | Goal |
+|-------|-------------|------|
+| `addr_x_direction` | Address × Direction | 100% |
+| `addr_x_response` | Address × Response | 80% |
+
+---
+
+## 5. ASSERTIONS
+
+### 5.1 Stability Assertions
+| Assertion ID | Property | Disable Condition |
+|--------------|----------|-------------------|
+| paddr_stable | Address stable during transaction | `disable iff (!preset_n)` |
+| pwdata_stable | Write data stable during transaction | `disable iff (!preset_n)` |
+
+### 5.2 Protocol Assertions
+| Assertion ID | Property | Disable Condition |
+|--------------|----------|-------------------|
+| penable_after_psel | penable only when psel=1 | `disable iff (!preset_n)` |
+| psel_penable_timing | Proper SETUP→ACCESS timing | `disable iff (!preset_n)` |
+
+---
+
+## 6. RAL IMPLEMENTATION
+
+### 6.1 Register Classes
+| Class | Base Class | Description |
+|-------|------------|-------------|
+| ctrl_reg | uvm_reg | 32-bit RW register |
+| status_reg | uvm_reg | RO with hw_id field |
+| data_reg | uvm_reg | 32-bit RW register |
+| irq_reg | uvm_reg | 32-bit W1C register |
+| apb_reg_block | uvm_reg_block | Contains all registers |
+
+### 6.2 Adapter Methods
+| Method | Direction | Description |
+|--------|-----------|-------------|
+| reg2bus() | RAL → APB | Converts uvm_reg_bus_op to apb_tx |
+| bus2reg() | APB → RAL | Extracts response from apb_tx |
+
+### 6.3 RAL Data Flow
 | Step | Action |
 |------|--------|
 | 1 | Test sets `sequence.model = env.reg_block` |
@@ -61,4 +159,4 @@ The DUT is an APB slave with:
 
 ---
 
-**APB project complete!** Ready for RISC-V?
+

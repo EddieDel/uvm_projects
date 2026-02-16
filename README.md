@@ -63,6 +63,15 @@ AMBA APB slave/master with register file. Features complete APB protocol impleme
 ---
 
 
+### 04 - APB Slave Master Verification
+
+AMBA AXI4 with multiple agents. (Work in progress)
+
+[View Project](./04_AXI_project/)
+
+---
+
+
 ## Learning Projects
 
 Smaller focused projects exploring specific UVM features and verification techniques:

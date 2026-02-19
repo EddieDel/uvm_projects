@@ -103,4 +103,3 @@ This portfolio represents hands-on projects built to complement my professional 
 ---
 
 *Last Updated: February 2026*  
-*Open to opportunities in Design Verification Engineering and UVM Testbench Development*

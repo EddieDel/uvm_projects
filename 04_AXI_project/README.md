@@ -1,6 +1,6 @@
 # AXI4 Master VIP 
 
-Complete UVM testbench for an AXI4 slave with Register Abstraction Layer (RAL) integration and multiple agents.
+Work in progress UVM testbench for an AXI4 slave, with Register Abstraction Layer (RAL) integration and multiple agents for write and read.
 
 ### EDA Playground
 1. Open: https://edaplayground.com/x/dPxT
@@ -70,6 +70,7 @@ Complete UVM testbench for an AXI4 slave with Register Abstraction Layer (RAL) i
 |`awvalid x awready`|handshake|100%|
 |`arvalid x arready`|handshake|100%|
 |`wvalid x wready`|handshake|100%|
+
 
 
 

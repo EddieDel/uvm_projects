@@ -2,7 +2,7 @@
  `define AXI_WRITE_DRIVER_SV
 
 
-class axi_write_driver extends uvm_driver(.REQ(axi_write_tx));
+class axi_write_driver extends uvm_driver#(.REQ(axi_write_tx));
   `uvm_component_utils(axi_write_driver)
    
   
@@ -31,7 +31,7 @@ class axi_write_driver extends uvm_driver(.REQ(axi_write_tx));
     vif.cb_drv.wvalid  <= 0;
     vif.cb_drv.bready  <= 0;
     vif.cb_drv.wlast   <= 0;
-    
+    @(vif.cb_drv);
     forever begin
       drive_transactions();
     end
@@ -46,25 +46,26 @@ class axi_write_driver extends uvm_driver(.REQ(axi_write_tx));
     
   virtual task drive_transaction(axi_write_tx item);
     
+    `uvm_info("Driver",$sformatf("\%0s\": %0s",item.get_full_name(),item.convert2string()), UVM_NONE)
+    
     burst_len = item.wdata.size();
     
     // wait for reset to finish
     wait (vif.aresetn);
     @(vif.cb_drv);
     
-    
-    //In order from Idle to go to write data , awvalid must be asserted.
-    vif.cb_drv.awvalid <= 1;
-    
     //prepare signals      
     vif.cb_drv.awid    <= item.awid;
     vif.cb_drv.awaddr  <= item.awaddr;
     vif.cb_drv.awlen   <= item.awlen;
     vif.cb_drv.awsize  <= item.awsize;
-    vif.cb_drv.awburst <= item.awburst; 
+    vif.cb_drv.awburst <= item.awburst;        
+    
+    //In order from Idle to go to write data , awvalid must be asserted.
+    vif.cb_drv.awvalid <= 1;
     
     //wait for handshake 
-    wait (vif.cb_drv.awvalid && vif.cb_drv.awready);
+    wait (vif.cb_drv.awready);
     @(vif.cb_drv);
     vif.cb_drv.awvalid <= 0;
     
@@ -86,7 +87,7 @@ class axi_write_driver extends uvm_driver(.REQ(axi_write_tx));
 
     //handshake for w_resp
     vif.cb_drv.bready <= 1;
-    wait(vif.cb_drv.bvalid && vif.cb_drv.bready);
+    wait(vif.cb_drv.bvalid);
     @(vif.cb_drv);
     
     //capture wresp items;

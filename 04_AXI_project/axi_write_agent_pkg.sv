@@ -12,8 +12,8 @@ import uvm_pkg::*;
 `include "axi_write_sequences.sv";
 `include "axi_write_sequencer.sv";
 `include "axi_write_driver.sv";
+`include "axi_write_monitor.sv";
 `include "axi_write_agent.sv";
-
 
 endpackage
 

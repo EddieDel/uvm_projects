@@ -6,6 +6,7 @@ class axi_env extends uvm_env;
   
   //Declarations
   axi_write_agent write_agent;
+  axi_read_agent  read_agent;
   
   
   function new(string name = "",uvm_component parent);
@@ -15,6 +16,7 @@ class axi_env extends uvm_env;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     write_agent = axi_write_agent::type_id::create("write_agent",this);
+    read_agent  = axi_read_agent::type_id::create("read_agent",this);
     //build scoreboard here
     //build coverage here
   endfunction

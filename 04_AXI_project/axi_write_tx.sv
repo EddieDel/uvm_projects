@@ -37,7 +37,7 @@ class axi_write_tx extends uvm_sequence_item;
 
   virtual function string convert2string();
     string result;
-    result = $sformatf ("Sending transaction with:");
+    result = $sformatf ("Sending [Write] transaction: ");
     result = {result, $sformatf(", AWID: %0d, AWADDR: %0h, AWLEN: %0d, AWSIZE: %0d, BURST_TYPE:%0s,WDATA: %p and WSTROBE: %p", awid, awaddr, awlen, awsize, awburst, wdata, wstrb)};
     return result;
   endfunction

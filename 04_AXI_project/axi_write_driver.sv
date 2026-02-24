@@ -20,7 +20,7 @@ class axi_write_driver extends uvm_driver#(.REQ(axi_write_tx));
     
     //Retrieve virtual interface
     if (!uvm_config_db#(virtual axi_if)::get(this,"","vif",vif)) begin
-        `uvm_fatal("AXI WRITE DRIVER","Failed to get virtual interface")
+      `uvm_fatal("Write Driver","Failed to get virtual interface")
     end
   endfunction
   
@@ -46,7 +46,7 @@ class axi_write_driver extends uvm_driver#(.REQ(axi_write_tx));
     
   virtual task drive_transaction(axi_write_tx item);
     
-    `uvm_info("Driver",$sformatf("\%0s\": %0s",item.get_full_name(),item.convert2string()), UVM_NONE)
+    `uvm_info("Write Driver",$sformatf("\%0s\": %0s",item.get_full_name(),item.convert2string()), UVM_NONE)
     
     burst_len = item.wdata.size();
     

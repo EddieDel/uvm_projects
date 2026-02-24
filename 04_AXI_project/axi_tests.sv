@@ -5,7 +5,8 @@ class axi_tests extends axi_test_base;
   `uvm_component_utils(axi_tests)
   
   //Declare sequences here
-  axi_write_sequences random_sequences;
+  axi_write_sequences random_write_sequences;
+  axi_read_sequences  random_read_sequences;
   
   //Virtual interface handle
   virtual axi_if vif;
@@ -16,7 +17,8 @@ class axi_tests extends axi_test_base;
   
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    random_sequences = axi_write_sequences::type_id::create("random_sequences",this);
+    random_write_sequences = axi_write_sequences::type_id::create("random_write_sequences",this);
+    random_read_sequences = axi_read_sequences::type_id::create("random_read_sequences",this);
   endfunction
   
   
@@ -27,9 +29,10 @@ class axi_tests extends axi_test_base;
     phase.raise_objection(this, "========= Start Tests =========");
     
     
-    `uvm_info ("Tests",">>> Starting random sequences...", UVM_LOW);
+    `uvm_info ("Tests",">>> Starting random write and read sequences...", UVM_LOW);
     reset_dut(vif);
-    random_sequences.start(environment.write_agent.write_sequencer);
+    random_write_sequences.start(environment.write_agent.write_sequencer);
+    random_read_sequences.start(environment.read_agent.read_sequencer);
               
     
     phase.drop_objection(this, "========= End Tests =========");

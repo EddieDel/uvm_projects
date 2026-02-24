@@ -1,6 +1,6 @@
 # AXI4 Master VIP (WiP)
 
-Work in progress UVM testbench for an AXI4 slave, with Register Abstraction Layer (RAL) integration and multiple agents for write and read channels.
+Work in progress UVM testbench for an AXI4 slave, with multiple agents for write and read channels. 
 
 ### EDA Playground
 1. Open: https://edaplayground.com/x/dPxT
@@ -70,6 +70,7 @@ Work in progress UVM testbench for an AXI4 slave, with Register Abstraction Laye
 |`awvalid x awready`|handshake|100%|
 |`arvalid x arready`|handshake|100%|
 |`wvalid x wready`|handshake|100%|
+
 
 
 

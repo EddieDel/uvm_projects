@@ -28,10 +28,10 @@ This portfolio demonstrates my ability to design and build complete testbenches 
 ## Portfolio Highlights
 
 - Complete UVM testbenches built from scratch
-- Multiple protocol implementations (APB, UART, custom interfaces)
+- Multiple protocol implementations (APB, UART, AXI, custom interfaces)
 - Functional coverage driven methodology
 - SystemVerilog Assertions for protocol checking
-- Professional verification planning and documentation
+- Verification planning and documentation
 - Constrained random testing, scoreboard checking
 
 ---

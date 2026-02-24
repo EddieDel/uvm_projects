@@ -8,7 +8,7 @@
 package axi_env_pkg;
 import uvm_pkg::*;
 import axi_write_agent_pkg::*;
-//import axi_read_agent_pkg::*;
+import axi_read_agent_pkg::*;
 
 `include "axi_env.sv";
 

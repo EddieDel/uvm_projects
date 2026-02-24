@@ -8,8 +8,7 @@ class axi_write_agent extends uvm_agent;
   virtual axi_if      vif;
   axi_write_driver    write_driver;
   axi_write_sequencer write_sequencer;
-  //monitor
-  //tlm_port  
+  axi_write_monitor   write_monitor;
   
   
   function new (string name ="",uvm_component parent);
@@ -24,16 +23,14 @@ class axi_write_agent extends uvm_agent;
     end
     write_driver    = axi_write_driver::type_id::create("write_driver",this);
     write_sequencer = axi_write_sequencer::type_id::create("write_sequencer",this);
-    
-    write_driver.vif = vif;
-    //create monitor
-    //create sequencer?
+    write_monitor   = axi_write_monitor::type_id::create("write_monitor",this);
+    write_driver.vif  = vif;
+    write_monitor.vif = vif;    
   endfunction
   
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     write_driver.seq_item_port.connect(write_sequencer.seq_item_export);
-    //connect monitor
   endfunction
   
 endclass

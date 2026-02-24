@@ -1,6 +1,5 @@
 `ifndef AXI_SLAVE_MEM_SV
 `define AXI_SLAVE_MEM_SV
-
 module axi_slave_mem #(
   parameter ADDR_WIDTH = 32,
   parameter DATA_WIDTH = 32,
@@ -9,7 +8,6 @@ module axi_slave_mem #(
 )(
   input  logic                    aclk,
   input  logic                    aresetn,
-
   // Write Address Channel
   input  logic [ID_WIDTH-1:0]     awid,
   input  logic [ADDR_WIDTH-1:0]   awaddr,
@@ -18,20 +16,17 @@ module axi_slave_mem #(
   input  logic [1:0]              awburst,
   input  logic                    awvalid,
   output logic                    awready,
-
   // Write Data Channel
   input  logic [DATA_WIDTH-1:0]   wdata,
   input  logic [DATA_WIDTH/8-1:0] wstrb,
   input  logic                    wlast,
   input  logic                    wvalid,
   output logic                    wready,
-
   // Write Response Channel
   output logic [ID_WIDTH-1:0]     bid,
   output logic [1:0]              bresp,
   output logic                    bvalid,
   input  logic                    bready,
-
   // Read Address Channel
   input  logic [ID_WIDTH-1:0]     arid,
   input  logic [ADDR_WIDTH-1:0]   araddr,
@@ -40,7 +35,6 @@ module axi_slave_mem #(
   input  logic [1:0]              arburst,
   input  logic                    arvalid,
   output logic                    arready,
-
   // Read Data Channel
   output logic [ID_WIDTH-1:0]     rid,
   output logic [DATA_WIDTH-1:0]   rdata,
@@ -91,9 +85,9 @@ module axi_slave_mem #(
     logic [ADDR_WIDTH-1:0] aligned_addr;
     logic [ADDR_WIDTH-1:0] wrap_boundary;
     integer num_bytes;
-
+    
     num_bytes = 1 << size;
-
+    
     case (burst)
       2'b00: return addr;                          // FIXED
       2'b01: return addr + num_bytes;              // INCR
@@ -142,7 +136,7 @@ module axi_slave_mem #(
             w_state      <= W_DATA;
           end
         end
-
+        
         W_DATA: begin
           if (wvalid && wready) begin
             // Write bytes based on wstrb
@@ -151,11 +145,11 @@ module axi_slave_mem #(
                 mem[aw_addr_reg[7:0] + i] <= wdata[i*8 +: 8];
               end
             end
-
+            
             // Update address for next beat
             aw_addr_reg <= next_burst_addr(aw_addr_reg, aw_size_reg, aw_burst_reg, aw_len_reg);
             w_beat_cnt  <= w_beat_cnt + 1;
-
+            
             if (wlast) begin
               wready  <= 1'b0;
               bvalid  <= 1'b1;
@@ -165,7 +159,7 @@ module axi_slave_mem #(
             end
           end
         end
-
+        
         W_RESP: begin
           if (bvalid && bready) begin
             bvalid  <= 1'b0;
@@ -209,17 +203,16 @@ module axi_slave_mem #(
             rvalid       <= 1'b1;
             rid          <= arid;
             rresp        <= 2'b00; // OKAY
-
+            
             // Read first beat
             for (int i = 0; i < DATA_WIDTH/8; i++) begin
               rdata[i*8 +: 8] <= mem[araddr[7:0] + i];
             end
-
             rlast <= (arlen == 0);
             r_state <= R_DATA;
           end
         end
-
+        
         R_DATA: begin
           if (rvalid && rready) begin
             if (rlast) begin
@@ -230,12 +223,11 @@ module axi_slave_mem #(
             end else begin
               r_beat_cnt  <= r_beat_cnt + 1;
               ar_addr_reg <= next_burst_addr(ar_addr_reg, ar_size_reg, ar_burst_reg, ar_len_reg);
-
+              
               // Read next beat
               for (int i = 0; i < DATA_WIDTH/8; i++) begin
                 rdata[i*8 +: 8] <= mem[next_burst_addr(ar_addr_reg, ar_size_reg, ar_burst_reg, ar_len_reg) + i];
               end
-
               rlast <= ((r_beat_cnt + 1) == ar_len_reg);
             end
           end
@@ -244,13 +236,6 @@ module axi_slave_mem #(
     end
   end
 
-  // Initialize memory
-  initial begin
-    for (int i = 0; i < MEM_DEPTH; i++) begin
-      mem[i] = '0;
-    end
-  end
-
 endmodule
-
 `endif
+

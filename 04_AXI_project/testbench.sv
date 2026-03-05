@@ -67,6 +67,11 @@ module testbench();
   end
   
   initial begin
+    axif.arvalid = 0;
+    axif.rready  = 0;
+  end
+  
+  initial begin
     $dumpfile("dump.vcd");
     $dumpvars;
     // set interface in database
@@ -76,4 +81,3 @@ module testbench();
   
   
 endmodule
-  

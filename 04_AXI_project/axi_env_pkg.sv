@@ -15,7 +15,8 @@ package axi_env_pkg;
   `include "axi_write_sequences.sv" 
   `include "axi_read_sequences.sv"
   `include "axi_virtual_sequencer.sv"
-  `include "axi_virtual_sequences.sv"   
+  `include "axi_virtual_sequences.sv"
+  `include "axi_coverage.sv"
   `include "axi_scoreboard.sv"
   `include "axi_env.sv"
 endpackage

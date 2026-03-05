@@ -10,6 +10,7 @@ class axi_env extends uvm_env;
   axi_read_agent         read_agent;
   axi_scoreboard         scoreboard;
   axi_virtual_sequencer  v_sqr;
+  axi_coverage           coverage;
   
   
   function new(string name = "",uvm_component parent);
@@ -22,6 +23,7 @@ class axi_env extends uvm_env;
     read_agent  = axi_read_agent::type_id::create("read_agent",this);
     scoreboard  = axi_scoreboard::type_id::create("scoreboard",this);
     v_sqr       = axi_virtual_sequencer::type_id::create("v_sqr",this);
+    coverage    = axi_coverage::type_id::create("coverage",this);
     //build coverage here
   endfunction
   
@@ -30,11 +32,14 @@ class axi_env extends uvm_env;
     write_agent.write_monitor.analysis_port.connect(scoreboard.write_export);
     read_agent.read_monitor.read_analysis_port.connect(scoreboard.read_export);
     
+    write_agent.write_monitor.analysis_port.connect(coverage.wr_item);
+    read_agent.read_monitor.read_analysis_port.connect(coverage.r_item);
+    
     //connect virtual sequencer to actuall sequencers.
     v_sqr.write_sqr = write_agent.write_sequencer;
     v_sqr.read_sqr  = read_agent.read_sequencer;
         
-    //connect analysis port with coverage
+
   endfunction
   
 endclass

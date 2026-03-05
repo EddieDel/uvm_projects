@@ -74,7 +74,6 @@ class axi_write_driver extends uvm_driver#(.REQ(axi_write_tx));
 
     //Data to be sent
     for (int i = 0; i<burst_len; i++) begin
-      @(vif.cb_drv);
       vif.cb_drv.wdata   <= item.wdata[i];
       vif.cb_drv.wstrb   <= item.wstrb[i];
       vif.cb_drv.wvalid  <= 1;

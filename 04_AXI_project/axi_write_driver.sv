@@ -72,17 +72,21 @@ class axi_write_driver extends uvm_driver#(.REQ(axi_write_tx));
     //wready <= will assert from the dut.
     //awready <= will become 0 from the dut.
 
-    //Data to be sent
-    for (int i = 0; i<burst_len; i++) begin
-      vif.cb_drv.wdata   <= item.wdata[i];
-      vif.cb_drv.wstrb   <= item.wstrb[i];
-      vif.cb_drv.wvalid  <= 1;
-      if (i == (burst_len - 1))
-       vif.cb_drv.wlast   <= 1; //assert wlast at burst_len - 1, last iteration;
-      // Wait for handshake
-      do @(vif.cb_drv);
-      while (!vif.cb_drv.wready);
-    end
+	//Data to be sent
+	for (int i = 0; i < burst_len; i++) begin
+  		vif.cb_drv.wdata  <= item.wdata[i];
+  		vif.cb_drv.wstrb  <= item.wstrb[i];
+  		vif.cb_drv.wvalid <= 1;
+  		vif.cb_drv.wlast  <= (i == burst_len - 1);
+  
+  		// Wait for handshake
+  		@(vif.cb_drv);
+  		while (!vif.cb_drv.wready) @(vif.cb_drv);
+  
+  		// Deassert immediately after handshake
+  		vif.cb_drv.wvalid <= 0;
+  		vif.cb_drv.wlast  <= 0;
+	end
 
     //handshake for w_resp
     vif.cb_drv.bready <= 1;
@@ -104,3 +108,4 @@ class axi_write_driver extends uvm_driver#(.REQ(axi_write_tx));
       
 endclass
 `endif
+

@@ -65,7 +65,7 @@ AMBA APB slave/master with register file. Features complete APB protocol impleme
 
 ### 04 - AXI4 Verification
 
-AMBA AXI4 with multiple agents, organized traffic through virtual sequences / sequencers. (Work in progress)
+AMBA AXI4 with multiple agents, organized traffic through virtual sequences / sequencers.
 
 [View Project](./04_AXI_project/)
 

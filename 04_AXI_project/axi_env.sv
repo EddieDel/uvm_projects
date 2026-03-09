@@ -1,7 +1,5 @@
 `ifndef AXI_ENV_SV
  `define AXI_ENV_SV
-
-
 class axi_env extends uvm_env;
   `uvm_component_utils(axi_env)
   
@@ -39,9 +37,7 @@ class axi_env extends uvm_env;
     v_sqr.write_sqr = write_agent.write_sequencer;
     v_sqr.read_sqr  = read_agent.read_sequencer;
         
-
   endfunction
   
 endclass
-
 `endif
